@@ -1,0 +1,41 @@
+private void showPopupMenu(View view, int position) {
+        // inflate menu
+        PopupMenu popup = new PopupMenu(context, view);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.notifications_menu, popup.getMenu());
+
+        Object menuHelper;
+        Class[] argTypes;
+        try {
+            Field fMenuHelper = PopupMenu.class.getDeclaredField("mPopup");
+            fMenuHelper.setAccessible(true);
+            menuHelper = fMenuHelper.get(popup);
+            argTypes = new Class[]{boolean.class};
+            menuHelper.getClass().getDeclaredMethod("setForceShowIcon", argTypes).invoke(menuHelper, true);
+        } catch (Exception e) {
+
+        }
+
+		if (list.get(position).getIsRead()) {
+            popup.getMenu().findItem(R.id.navigation_mark_as_read).setVisible(false);
+        }
+
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.navigation_delete:
+                        notificationDelete(list.get(position).getId(), position);
+                        break;
+                    case R.id.navigation_mark_as_read:
+                        markAsRead(list.get(position), true, position, true);
+                        break;
+                }
+                return true;
+            }
+        });
+
+        popup.show();
+    }
+	
+	
